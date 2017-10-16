@@ -153,6 +153,9 @@ public class VerticleMain {
                 System.out.println("发送数据成功");
             }else {
                 System.out.println("发送数据失败");
+
+                System.out.println("commit from ide test");
+
             }
         });
     }
