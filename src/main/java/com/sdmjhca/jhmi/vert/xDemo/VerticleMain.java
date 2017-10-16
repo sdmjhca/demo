@@ -1,10 +1,10 @@
 package com.sdmjhca.jhmi.vert.xDemo;
 
 import io.vertx.core.*;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.datagram.DatagramSocket;
 import io.vertx.core.json.JsonObject;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author JHMI on 2017/10/11.、
@@ -31,6 +31,7 @@ public class VerticleMain {
 
         */
 
+        System.out.println("当前线程="+Thread.currentThread().getName());
         //VertxOptions对象有很多配置，包括集群、高可用、池大小等。在Javadoc中描述了所有配置的细节。
         VertxOptions vertxOptions = new VertxOptions();
         //vertxOptions.setClustered(true);
@@ -46,9 +47,9 @@ public class VerticleMain {
 
         //一次性定时器
         vertx1.setTimer(1000,req->{
-            System.out.println(" timer 是在一秒中之后执行的 --------"+System.currentTimeMillis());
+            System.out.println(Thread.currentThread().getName()+" timer 是在一秒中之后执行的 --------"+System.currentTimeMillis());
         });
-        System.out.println("我先执行的，timer会在一秒钟之后执行"+System.currentTimeMillis());
+        System.out.println(Thread.currentThread().getName()+"我先执行的，timer会在一秒钟之后执行"+System.currentTimeMillis());
 
         //设置一个standard verticle
         //vertx1.deployVerticle(FirstVerticle.class.getName());
@@ -56,7 +57,7 @@ public class VerticleMain {
         //attr1 Java类全限定类名 attr2 异步通知
         vertx1.deployVerticle(FirstVerticle.class.getName(),res->{
             if(res.succeeded()){
-                System.out.println("first verticle deployed"+ res.result());
+                System.out.println(Thread.currentThread().getName()+"first verticle deployed"+ res.result());
             }else{
                 System.out.println("first verticle failed");
             }
@@ -72,39 +73,51 @@ public class VerticleMain {
 
         //设置一个worker verticle
         vertx1.executeBlocking(future -> {
+
+            future.setHandler(req->{
+                if(req.succeeded()){
+                    System.out.println(Thread.currentThread().getName()+" worker thread" +
+                            "阻塞操作执行完成，执行结果="+req.result());
+                }else{
+                    System.out.println("阻塞操作执行失败");
+                }
+            });
+
             String result = "we are done!";
-            System.out.println("执行一些阻塞的操作！");
+            System.out.println(Thread.currentThread().getName()+"worker thread 执行一些阻塞的操作！");
+            System.out.println("阻塞操作异步执行中...");
             //执行结束返回future
             future.complete(result);
+
         },res->{
             //获取执行的结果
-            System.out.println("execute result = "+res.result());
+            System.out.println(Thread.currentThread().getName()+" verticle thread execute result = "+res.result());
         });
 
         //vertx1.close();//推出vert。x环境
         //Context对象
         Context context = vertx1.getOrCreateContext();
         context.runOnContext(handler->{
-            System.out.println("-----------context 异步执行 处理器");
+            System.out.println(Thread.currentThread().getName()+"-----------context 异步执行 处理器");
         });
         System.out.println("isEventLoopContext="+context.isEventLoopContext());
         System.out.println("isMultiThreadedWorkerContext="+context.isMultiThreadedWorkerContext());
         System.out.println("isWorkerContext="+context.isWorkerContext());
         System.out.println("Context.isOnEventLoopThread()="+Context.isOnEventLoopThread());
         String name = context.config().getString("name");
-        System.out.println("context-------------------获取verticle配置属性"+name);
+        System.out.println(Thread.currentThread().getName()+"context-------------------获取verticle配置属性"+name);
 
         WorkerExecutor workerExecutor = vertx1.createSharedWorkerExecutor("my-test-poll");
         workerExecutor.executeBlocking(new Handler<Future<String>>() {
             @Override
             public void handle(Future<String> future) {
-                System.out.println("start block");
+                System.out.println(Thread.currentThread().getName()+"-----------start block");
                 future.complete("okokokok");
             }
         }, new Handler<AsyncResult<String>>() {
             @Override
             public void handle(AsyncResult<String> tAsyncResult) {
-                System.out.println(tAsyncResult.result());
+                System.out.println(Thread.currentThread().getName()+"-----------"+tAsyncResult.result());
             }
         });
         //设置集群，相关配置
@@ -131,5 +144,16 @@ public class VerticleMain {
             }
         }
         );*/
+
+        //发送UDP数据报文
+        DatagramSocket datagramSocket = vertx1.createDatagramSocket();
+        Buffer buffer = Buffer.buffer("UDP test 数据");
+        datagramSocket.send(buffer,8082,"localhost",req->{
+            if (req.succeeded()){
+                System.out.println("发送数据成功");
+            }else {
+                System.out.println("发送数据失败");
+            }
+        });
     }
 }
