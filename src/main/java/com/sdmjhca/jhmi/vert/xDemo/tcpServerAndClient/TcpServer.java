@@ -27,12 +27,12 @@ public class TcpServer extends AbstractVerticle{
                 throwable.printStackTrace();
             }).closeHandler(req->{
                 System.out.println("监听到连接关闭");
-                netServer.close(res->{
+                /*netServer.close(res->{
                     System.out.println("开始关闭TCP连接");
                     if(res.succeeded()){
                         System.out.println("成功关闭TCP链接");
                     }
-                });
+                });*/
             });
         });
 
