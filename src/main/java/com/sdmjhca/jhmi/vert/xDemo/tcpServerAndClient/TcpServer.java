@@ -23,10 +23,26 @@ public class TcpServer extends AbstractVerticle{
                 System.out.println("监听接收到的消息="+msg);
                 //netSocket.write("我已收到你的消息="+msg);
             }).exceptionHandler(throwable -> {
-                System.out.println("监听发生的异常");
+                System.out.println("监听到发生异常");
                 throwable.printStackTrace();
+            }).closeHandler(req->{
+                System.out.println("监听到连接关闭");
+                netServer.close(res->{
+                    System.out.println("开始关闭TCP连接");
+                    if(res.succeeded()){
+                        System.out.println("成功关闭TCP链接");
+                    }
+                });
             });
         });
+
+        /*netServer.close(res->{
+            System.out.println("开始关闭TCP连接");
+            if(res.succeeded()){
+                System.out.println("成功关闭TCP链接");
+            }
+        });*/
+
 
         netServer.listen(8080,"localhost",req->{
             if(req.succeeded()){
