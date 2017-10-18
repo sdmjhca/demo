@@ -1,4 +1,4 @@
-package com.sdmjhca.jhmi.vert.xDemo;
+package com.sdmjhca.jhmi.vert.xDemo.verticleTest;
 
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
@@ -55,7 +55,7 @@ public class VerticleMain {
         //vertx1.deployVerticle(FirstVerticle.class.getName());
         //当verticle部署完成时，接受异步通知
         //attr1 Java类全限定类名 attr2 异步通知
-        vertx1.deployVerticle(FirstVerticle.class.getName(),res->{
+        vertx1.deployVerticle(FirstVerticle.class.getName(), res->{
             if(res.succeeded()){
                 System.out.println(Thread.currentThread().getName()+"first verticle deployed"+ res.result());
             }else{
@@ -67,7 +67,7 @@ public class VerticleMain {
         //设置verticle的属性
         JsonObject jsonObject = new JsonObject().put("name","sdmjhca");
         DeploymentOptions deploymentOptions = new DeploymentOptions().setWorker(true)
-                .setInstances(16)//指定您想要部署的 Verticle 实例的数量
+                //.setInstances(16)//指定您想要部署的 Verticle 实例的数量
                 .setConfig(jsonObject);//设置josn格式的配置
         vertx1.deployVerticle(FirstVerticle.class.getName(),deploymentOptions);
 

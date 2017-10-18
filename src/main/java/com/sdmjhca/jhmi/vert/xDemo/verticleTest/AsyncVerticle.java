@@ -21,7 +21,7 @@ public class AsyncVerticle extends AbstractVerticle {
             }
         });
         //部署一个新的Verticle
-        vertx.deployVerticle("com.sdmjhca.jhmi.vert.xDemo.FirstVerticle",req->{
+        vertx.deployVerticle("com.sdmjhca.jhmi.vert.xDemo.verticleTest.FirstVerticle",req->{
             if(req.succeeded()){
                 System.out.println("部署 下一个verticle成功---FirstVerticle");
                 //startFuture.complete();
@@ -34,7 +34,7 @@ public class AsyncVerticle extends AbstractVerticle {
             }
 
         });
-        vertx.deployVerticle("com.sdmjhca.jhmi.vert.xDemo.FirstVerticle",
+        vertx.deployVerticle("com.sdmjhca.jhmi.vert.xDemo.verticleTest.FirstVerticle",
                 new DeploymentOptions().setConfig(new JsonObject().put("name","test st")),future.completer());
     }
 

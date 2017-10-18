@@ -1,4 +1,4 @@
-package com.sdmjhca.jhmi.vert.xDemo;
+package com.sdmjhca.jhmi.vert.xDemo.verticleTest;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
