@@ -193,7 +193,10 @@ public class HttpServerDemo {
             HttpServerRequest request = ctx.request();
 
             MultiMap multiMap = request.params();
-            System.out.println("server 收到的请求="+multiMap.toString());
+            System.out.println("server  params 收到的请求="+multiMap.toString());
+
+            MultiMap attributes = request.formAttributes();
+            System.out.println("server  attributes 收到的请求="+attributes.toString());
 
             /**
              * 用于接收xxx-formed格式参数
@@ -213,7 +216,7 @@ public class HttpServerDemo {
             json.put("type",s).put("name",name);
 
             System.out.println("xxx-formed格式请求参数="+json.toString());
-            ctx.response().end("收到client请求");
+            ctx.response().end(new JsonObject().put("key","收到client请求").toBuffer());
         }).failureHandler(ctx->{
             System.out.println("捕获到异常状态吗="+ctx.statusCode());
         });
