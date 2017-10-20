@@ -1,12 +1,16 @@
 package com.sdmjhca.jhmi.vertxWeb;
 
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.LanguageHeader;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.client.HttpRequest;
 
 /**
  * @author JHMI on 2017/10/20.
@@ -17,7 +21,8 @@ public class HttpServerDemo {
     public static void main(String[] args) {
         //HttpServerDemo.specifyRoute(vertx);
         //HttpServerDemo.testHttpMethod(vertx);
-        HttpServerDemo.testMimeTypes(vertx);
+        //HttpServerDemo.testMimeTypes(vertx);
+        HttpServerDemo.testHttpClient(vertx);
     }
 
     /**
@@ -164,6 +169,51 @@ public class HttpServerDemo {
             String ss = ctx.get("ss");
             System.out.println("post请求参数="+s);
             ctx.response().end("收到text/html请求");
+        }).failureHandler(ctx->{
+            System.out.println("捕获到异常状态吗="+ctx.statusCode());
+        });
+
+        httpServer.requestHandler(req->{
+            router.accept(req);
+        }).listen(8080);
+    }
+    /**
+     * 接受http client的请求
+     */
+    public static void testHttpClient(Vertx vertx){
+        HttpServer httpServer = vertx.createHttpServer();
+
+        Router router = Router.router(vertx);
+
+        //接受get请求
+        Route route = router.route("/get/client/").handler(ctx->{
+            System.out.println("收到client请求");
+
+
+            HttpServerRequest request = ctx.request();
+
+            MultiMap multiMap = request.params();
+            System.out.println("server 收到的请求="+multiMap.toString());
+
+            /**
+             * 用于接收xxx-formed格式参数
+             */
+            String s = ctx.request().getParam("type");
+            String name = ctx.request().getParam("name");
+
+            /**
+             * 用于接受json 格式参数
+             */
+            request.bodyHandler(body->{
+                System.out.println("收到客户端请求json参数="+body);
+            });
+
+
+            JsonObject json = new JsonObject();
+            json.put("type",s).put("name",name);
+
+            System.out.println("xxx-formed格式请求参数="+json.toString());
+            ctx.response().end("收到client请求");
         }).failureHandler(ctx->{
             System.out.println("捕获到异常状态吗="+ctx.statusCode());
         });
