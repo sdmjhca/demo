@@ -23,6 +23,7 @@ public class MongoVerticle extends AbstractVerticle{
             //获取需要操作的文档
             JsonObject document = (JsonObject) message.body();
             mongoClient.insert("books",document,res->{
+                //如果不给消息发送者回执，mongomain消息发送者会按照超时没有收到响应处理
                 message.reply(res.result());
                 if(res.succeeded()){
                     System.out.println("操作数据库成功");
