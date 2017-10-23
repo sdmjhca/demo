@@ -1,4 +1,4 @@
-package com.sdmjhca.jhmi.vertxWeb;
+package com.sdmjhca.jhmi.vert.xDemo.vertxWeb;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
@@ -10,7 +10,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.LanguageHeader;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.client.HttpRequest;
 
 /**
  * @author JHMI on 2017/10/20.

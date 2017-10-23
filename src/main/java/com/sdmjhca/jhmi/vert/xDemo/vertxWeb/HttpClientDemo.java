@@ -1,9 +1,7 @@
-package com.sdmjhca.jhmi.vertxWeb;
+package com.sdmjhca.jhmi.vert.xDemo.vertxWeb;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.codec.BodyCodec;
 
@@ -24,7 +22,9 @@ public class HttpClientDemo {
 
 
         webClient.get(8080,"localhost","/get/client/")
-                .as(BodyCodec.json(RespDto.class))
+                .as(BodyCodec.json(RespDto.class))//转换为Java POJO
+                //将响应信息写入缓存，避免一次写入内存
+                //.as(BodyCodec.pipe(WriteStream))
                 .sendJson(json,res ->{
                     if(res.succeeded()){
                         System.out.println("发送HTTP请求成功");

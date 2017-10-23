@@ -1,0 +1,20 @@
+{
+	"mongo": {
+		"host": "localhost",
+		"port": 27017,
+		"serverSelectionTimeoutMS": 30000,
+		"db_name":"local"
+	},
+	"mysql": {
+	},
+	"im": [
+		{
+			"innerIP": "10.10.10.193",
+			"node": "111.206.162.233:4321"
+		}
+	],
+	"file": {
+		"upload.file.path.prefix": "/u01/projectCAR/xservice/xservice-file/",
+		"download.file.server.prefix": ":9090/mc-file/im/download.json?file="
+	}
+}
