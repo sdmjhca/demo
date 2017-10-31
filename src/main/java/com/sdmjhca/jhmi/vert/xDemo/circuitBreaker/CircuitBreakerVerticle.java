@@ -7,6 +7,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.WebClient;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CircuitBreakerVerticle extends AbstractVerticle{
 
     private AtomicInteger count = new AtomicInteger();
+    private CircuitBreaker circuitBreaker;
     @Override
     public void start() throws Exception {
         CircuitBreakerOptions options = new CircuitBreakerOptions();
@@ -31,7 +33,7 @@ public class CircuitBreakerVerticle extends AbstractVerticle{
         //options.setMetricsRollingWindow(10000);
 
         //1/创建断路器
-        CircuitBreaker circuitBreaker = CircuitBreaker.create("my-breaker",vertx,options);
+        circuitBreaker = CircuitBreaker.create("my-breaker",vertx,options);
 
         WebClient webClient = WebClient.create(vertx);
 
@@ -83,6 +85,8 @@ public class CircuitBreakerVerticle extends AbstractVerticle{
         // Register the metric handler
         router.get("/metrics").handler(HystrixMetricHandler.create(vertx,"sdmjhca.circuit"));
 
+        router.get("/test/circuit").handler(this::testCir);
+
         // Create the HTTP server using the router to dispatch the requests
         vertx.createHttpServer()
                 .requestHandler(router::accept)
@@ -93,5 +97,16 @@ public class CircuitBreakerVerticle extends AbstractVerticle{
     @Override
     public void stop() throws Exception {
         super.stop();
+    }
+
+    public void testCir(RoutingContext rc){
+
+        Future res = circuitBreaker.executeWithFallback(future -> {
+            //future.tryFail("future 执行失败");
+            future.tryComplete("future success");
+        },fallback->"fallback exeucute");
+        res.setHandler(result->{
+            rc.response().end(res.result().toString());
+        });
     }
 }
