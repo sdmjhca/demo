@@ -1,5 +1,7 @@
 package com.sdmjhca.jhmi.vert.xDemo.vertxWeb;
 
+import io.netty.handler.ssl.OpenSsl;
+import io.netty.handler.ssl.SslProvider;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
@@ -39,6 +41,7 @@ public class HttpClientDemo {
                     }
                 });
 
+
         /*webClient.post(8080,"localhost","/get/client/")
                 .sendJsonObject(json,res ->{
                     if(res.succeeded()){
@@ -48,5 +51,17 @@ public class HttpClientDemo {
                     }
                 });*/
 
+
+        final SslProvider sslProvider;
+
+        if (OpenSsl.isAvailable()) {
+            if (OpenSsl.isAlpnSupported()) {
+                sslProvider = SslProvider.OPENSSL;
+            } else {
+                sslProvider = SslProvider.JDK;
+            }
+        } else {
+            sslProvider = SslProvider.JDK;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.sdmjhca.jhmi.vert.xDemo.vertxWeb;
 
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -185,7 +186,7 @@ public class HttpServerDemo {
         Router router = Router.router(vertx);
 
         //接受get请求
-        Route route = router.route("/get/client/").handler(ctx->{
+        Route route = router.route("/circuit").handler(ctx->{
             System.out.println("收到client请求");
 
 
@@ -198,13 +199,16 @@ public class HttpServerDemo {
             System.out.println("server  attributes 收到的请求="+attributes.toString());
 
             /**
-             * 用于接收xxx-formed格式参数
+             * 接受get请求
+             * 用于接收www-formed格式参数
              */
             String s = ctx.request().getParam("type");
             String name = ctx.request().getParam("name");
 
             /**
+             * 接受post请求
              * 用于接受json 格式参数
+             * 或者接收www-formed格式参数
              */
             request.bodyHandler(body->{
                 System.out.println("收到客户端请求json参数="+body);
@@ -215,6 +219,12 @@ public class HttpServerDemo {
             json.put("type",s).put("name",name);
 
             System.out.println("xxx-formed格式请求参数="+json.toString());
+
+            /**
+             * 接受客户端post请求
+             */
+            System.out.println("接受客户端post请求="+ctx.getBodyAsString()+"---json格式="+ctx.getBodyAsJson());
+
             ctx.response().end(new JsonObject().put("key","收到client请求").toBuffer());
         }).failureHandler(ctx->{
             System.out.println("捕获到异常状态吗="+ctx.statusCode());
@@ -223,5 +233,7 @@ public class HttpServerDemo {
         httpServer.requestHandler(req->{
             router.accept(req);
         }).listen(8080);
+
+        //httpServer.requestHandler(router::accept).listen(8080);
     }
 }
