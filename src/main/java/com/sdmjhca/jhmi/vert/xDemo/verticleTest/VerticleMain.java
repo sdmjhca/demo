@@ -46,10 +46,12 @@ public class VerticleMain {
         Vertx vertx1 = Vertx.vertx(vertxOptions);
 
         //一次性定时器
-        vertx1.setTimer(1000,req->{
+        long l = vertx1.setTimer(1000,req->{
             System.out.println(Thread.currentThread().getName()+" timer 是在一秒中之后执行的 --------"+System.currentTimeMillis());
+
         });
         System.out.println(Thread.currentThread().getName()+"我先执行的，timer会在一秒钟之后执行"+System.currentTimeMillis());
+        System.out.println("llllllll="+l);
 
         //设置一个standard verticle
         //vertx1.deployVerticle(FirstVerticle.class.getName());

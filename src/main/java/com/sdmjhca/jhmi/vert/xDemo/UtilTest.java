@@ -1,7 +1,5 @@
 package com.sdmjhca.jhmi.vert.xDemo;
 
-import io.vertx.core.json.JsonObject;
-import org.springframework.core.env.Environment;
 
 import java.util.ResourceBundle;
 
