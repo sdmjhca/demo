@@ -14,6 +14,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 public class DiscardServer {
     //1
+    //2
     public void run(){
         EventLoopGroup boss = new NioEventLoopGroup();//boss负责接受进来的连接
         EventLoopGroup worker = new NioEventLoopGroup();//worker负责处理接受的连接

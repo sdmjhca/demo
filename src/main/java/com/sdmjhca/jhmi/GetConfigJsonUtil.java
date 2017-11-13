@@ -9,6 +9,7 @@ import java.io.InputStream;
  * @author JHMI on 2017/10/23.
  */
 public class GetConfigJsonUtil {
+    //2
     public static JsonObject getConfigJson() throws IOException {
         String path = System.getProperty("config","dev");
         System.out.println(path);
