@@ -25,4 +25,12 @@ public class MyPOJO implements Serializable{
     public void setSex(String sex) {
         this.sex = sex;
     }
+
+    @Override
+    public String toString() {
+        return "MyPOJO{" +
+                "name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                '}';
+    }
 }

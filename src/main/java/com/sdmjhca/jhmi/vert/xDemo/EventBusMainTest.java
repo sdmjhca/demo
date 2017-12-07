@@ -2,14 +2,13 @@ package com.sdmjhca.jhmi.vert.xDemo;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.eventbus.impl.codecs.JsonObjectMessageCodec;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,15 +19,12 @@ import java.util.Map;
  * Event Bus支持发布/订阅、点对点、请求/响应的消息通信方式。
  * Event Bus的API很简单。基本上只涉及注册处理器、撤销处理器和发送和发布消息。
  */
-public class EventBusMain {
+public class EventBusMainTest {
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         //获取event bus
         EventBus eb = vertx.eventBus();
 
-        //定义消息的编解码器
-        MessageCodecTest messageCodec = new MessageCodecTest();
-        eb.registerCodec(messageCodec);
 
         //注册处理器，收到消息的后续处理
         //attr1 处理器注册地址 全限定类名，attr2 消息
@@ -41,7 +37,8 @@ public class EventBusMain {
                 String value = (String) entry.getValue();
                 System.out.println("消息的请求头: name="+name+",value="+value);
             }
-            MyPOJO myPOJO = (MyPOJO) message.body();
+            JsonObject json = (JsonObject) message.body();
+            MyPOJO myPOJO = Json.decodeValue(json.toString(),MyPOJO.class);
             System.out.println("接收到的消息="+myPOJO.toString());
 
             message.reply(message.body());
@@ -66,13 +63,11 @@ public class EventBusMain {
         deliveryOptions.addHeader("header","header-name");
         //如果超过30秒没有收到响应，则返回fail
         deliveryOptions.setSendTimeout(30000);//设置发送消息的超时时间/毫秒/默认30秒
-        //设置消息的编解码器
-        deliveryOptions.setCodecName(messageCodec.name());
 
         MyPOJO myPOJO = new MyPOJO();
         myPOJO.setName("sdmjhca");
         myPOJO.setSex("boy");
-        eb.send("com.sdmjhca.ca",myPOJO,deliveryOptions,req->{
+        eb.send("com.sdmjhca.ca",JsonObject.mapFrom(myPOJO),deliveryOptions,req->{
             if(req.succeeded()){
                 System.out.println("收到接收者的回付消息="+req.result().body());
             }else{

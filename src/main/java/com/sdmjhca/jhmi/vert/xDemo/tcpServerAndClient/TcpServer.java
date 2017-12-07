@@ -19,7 +19,7 @@ public class TcpServer extends AbstractVerticle{
 
         NetServerOptions netServerOptions = new NetServerOptions();
         //This determines if a connection will timeout and be closed if no data is received within the timeout.
-        netServerOptions.setIdleTimeout(0);//设置连接的闲置时间1s,1s后如果收不到客户端消息自动关闭连接
+        netServerOptions.setIdleTimeout(10);//设置连接的闲置时间1s,1s后如果收不到客户端消息自动关闭连接
 
         NetServer netServer = vertx.createNetServer(netServerOptions);
 
